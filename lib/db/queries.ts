@@ -9,6 +9,7 @@ import {
   gt,
   gte,
   inArray,
+  isNull,
   lt,
   type SQL,
 } from "drizzle-orm";
@@ -76,12 +77,10 @@ export async function createGuestUser() {
 
 export async function saveChat({
   id,
-  userId,
   title,
   visibility,
 }: {
   id: string;
-  userId: string;
   title: string;
   visibility: VisibilityType;
 }) {
@@ -89,12 +88,41 @@ export async function saveChat({
     return await db.insert(chat).values({
       id,
       createdAt: new Date(),
-      userId,
+      userId: null,
       title,
       visibility,
     });
   } catch (_error) {
     throw new ChatbotError("bad_request:database", "Failed to save chat");
+  }
+}
+
+export async function deleteAllAnonymousChats() {
+  try {
+    const anonymousChats = await db
+      .select({ id: chat.id })
+      .from(chat)
+      .where(isNull(chat.userId));
+
+    if (anonymousChats.length === 0) {
+      return { deletedCount: 0 };
+    }
+
+    const chatIds = anonymousChats.map((currentChat) => currentChat.id);
+    await db.delete(vote).where(inArray(vote.chatId, chatIds));
+    await db.delete(message).where(inArray(message.chatId, chatIds));
+    await db.delete(stream).where(inArray(stream.chatId, chatIds));
+    const deletedChats = await db
+      .delete(chat)
+      .where(isNull(chat.userId))
+      .returning();
+
+    return { deletedCount: deletedChats.length };
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to delete anonymous chats"
+    );
   }
 }
 
@@ -224,6 +252,62 @@ export async function getChatsByUserId({
   }
 }
 
+export async function getAnonymousChats({
+  limit,
+  startingAfter,
+  endingBefore,
+}: {
+  limit: number;
+  startingAfter: string | null;
+  endingBefore: string | null;
+}) {
+  try {
+    const extendedLimit = limit + 1;
+    const query = (whereCondition?: SQL<unknown>) =>
+      db
+        .select()
+        .from(chat)
+        .where(
+          whereCondition
+            ? and(whereCondition, isNull(chat.userId))
+            : isNull(chat.userId)
+        )
+        .orderBy(desc(chat.createdAt))
+        .limit(extendedLimit);
+
+    let filteredChats: Chat[] = [];
+    if (startingAfter || endingBefore) {
+      const cursorId = startingAfter ?? endingBefore;
+      const [selectedChat] = await db
+        .select()
+        .from(chat)
+        .where(eq(chat.id, cursorId as string))
+        .limit(1);
+      if (!selectedChat) {
+        throw new ChatbotError("not_found:database", "Chat not found");
+      }
+      filteredChats = await query(
+        startingAfter
+          ? gt(chat.createdAt, selectedChat.createdAt)
+          : lt(chat.createdAt, selectedChat.createdAt)
+      );
+    } else {
+      filteredChats = await query();
+    }
+
+    const hasMore = filteredChats.length > limit;
+    return {
+      chats: hasMore ? filteredChats.slice(0, limit) : filteredChats,
+      hasMore,
+    };
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to get anonymous chats"
+    );
+  }
+}
+
 export async function getChatById({ id }: { id: string }) {
   try {
     const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
@@ -321,13 +405,11 @@ export async function saveDocument({
   title,
   kind,
   content,
-  userId,
 }: {
   id: string;
   title: string;
   kind: ArtifactKind;
   content: string;
-  userId: string;
 }) {
   try {
     return await db
@@ -337,7 +419,7 @@ export async function saveDocument({
         title,
         kind,
         content,
-        userId,
+        userId: null,
         createdAt: new Date(),
       })
       .returning();

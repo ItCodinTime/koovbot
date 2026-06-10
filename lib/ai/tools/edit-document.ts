@@ -1,15 +1,13 @@
 import { tool, type UIMessageStreamWriter } from "ai";
-import type { Session } from "next-auth";
 import { z } from "zod";
 import { getDocumentById, saveDocument } from "@/lib/db/queries";
 import type { ChatMessage } from "@/lib/types";
 
 type EditDocumentProps = {
-  session: Session;
   dataStream: UIMessageStreamWriter<ChatMessage>;
 };
 
-export const editDocument = ({ session, dataStream }: EditDocumentProps) =>
+export const editDocument = ({ dataStream }: EditDocumentProps) =>
   tool({
     description:
       "Make a targeted edit to an existing artifact by finding and replacing an exact string. Preferred over updateDocument for small changes. The old_string must match exactly.",
@@ -35,10 +33,6 @@ export const editDocument = ({ session, dataStream }: EditDocumentProps) =>
         return { error: "Document not found" };
       }
 
-      if (document.userId !== session.user?.id) {
-        return { error: "Forbidden" };
-      }
-
       if (!document.content) {
         return { error: "Document has no content" };
       }
@@ -56,7 +50,6 @@ export const editDocument = ({ session, dataStream }: EditDocumentProps) =>
         title: document.title,
         kind: document.kind,
         content: updated,
-        userId: document.userId,
       });
 
       dataStream.write({

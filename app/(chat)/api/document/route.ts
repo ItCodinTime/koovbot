@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { auth } from "@/app/(auth)/auth";
 import type { ArtifactKind } from "@/components/chat/artifact";
 import {
   deleteDocumentsByIdAfterTimestamp,
@@ -27,22 +26,12 @@ export async function GET(request: Request) {
     ).toResponse();
   }
 
-  const session = await auth();
-
-  if (!session?.user) {
-    return new ChatbotError("unauthorized:document").toResponse();
-  }
-
   const documents = await getDocumentsById({ id });
 
   const [document] = documents;
 
   if (!document) {
     return new ChatbotError("not_found:document").toResponse();
-  }
-
-  if (document.userId !== session.user.id) {
-    return new ChatbotError("forbidden:document").toResponse();
   }
 
   return Response.json(documents, { status: 200 });
@@ -57,12 +46,6 @@ export async function POST(request: Request) {
       "bad_request:api",
       "Parameter id is required."
     ).toResponse();
-  }
-
-  const session = await auth();
-
-  if (!session?.user) {
-    return new ChatbotError("not_found:document").toResponse();
   }
 
   let content: string;
@@ -85,14 +68,6 @@ export async function POST(request: Request) {
 
   const documents = await getDocumentsById({ id });
 
-  if (documents.length > 0) {
-    const [doc] = documents;
-
-    if (doc.userId !== session.user.id) {
-      return new ChatbotError("forbidden:document").toResponse();
-    }
-  }
-
   if (isManualEdit && documents.length > 0) {
     const result = await updateDocumentContent({ id, content });
     return Response.json(result, { status: 200 });
@@ -103,7 +78,6 @@ export async function POST(request: Request) {
     content,
     title,
     kind,
-    userId: session.user.id,
   });
 
   return Response.json(document, { status: 200 });
@@ -126,20 +100,6 @@ export async function DELETE(request: Request) {
       "bad_request:api",
       "Parameter timestamp is required."
     ).toResponse();
-  }
-
-  const session = await auth();
-
-  if (!session?.user) {
-    return new ChatbotError("unauthorized:document").toResponse();
-  }
-
-  const documents = await getDocumentsById({ id });
-
-  const [document] = documents;
-
-  if (document.userId !== session.user.id) {
-    return new ChatbotError("forbidden:document").toResponse();
   }
 
   const parsedTimestamp = new Date(timestamp);
