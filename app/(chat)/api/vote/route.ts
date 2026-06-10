@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { getChatById, getVotesByChatId, voteMessage } from "@/lib/db/queries";
+import {
+  getChatById,
+  getVotesByChatId,
+  isDatabaseConfigured,
+  voteMessage,
+} from "@/lib/db/queries";
 import { ChatbotError } from "@/lib/errors";
 
 const voteSchema = z.object({
@@ -17,6 +22,10 @@ export async function GET(request: Request) {
       "bad_request:api",
       "Parameter chatId is required."
     ).toResponse();
+  }
+
+  if (!isDatabaseConfigured) {
+    return Response.json([], { status: 200 });
   }
 
   const chat = await getChatById({ id: chatId });
@@ -45,6 +54,10 @@ export async function PATCH(request: Request) {
       "bad_request:api",
       "Parameters chatId, messageId, and type are required."
     ).toResponse();
+  }
+
+  if (!isDatabaseConfigured) {
+    return new Response("Message voted", { status: 200 });
   }
 
   const chat = await getChatById({ id: chatId });

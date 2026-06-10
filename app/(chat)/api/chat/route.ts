@@ -29,6 +29,7 @@ import {
   deleteChatById,
   getChatById,
   getMessagesByChatId,
+  isDatabaseConfigured,
   saveChat,
   saveMessages,
   updateChatTitleById,
@@ -78,13 +79,13 @@ export async function POST(request: Request) {
 
     const isToolApprovalFlow = Boolean(messages);
 
-    const chat = await getChatById({ id });
+    const chat = isDatabaseConfigured ? await getChatById({ id }) : null;
     let messagesFromDb: DBMessage[] = [];
     let titlePromise: Promise<string> | null = null;
 
-    if (chat) {
+    if (chat && isDatabaseConfigured) {
       messagesFromDb = await getMessagesByChatId({ id });
-    } else if (message?.role === "user") {
+    } else if (message?.role === "user" && isDatabaseConfigured) {
       await saveChat({
         id,
         title: "New chat",
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
       country,
     };
 
-    if (message?.role === "user") {
+    if (message?.role === "user" && isDatabaseConfigured) {
       await saveMessages({
         messages: [
           {
@@ -215,7 +216,7 @@ export async function POST(request: Request) {
           result.toUIMessageStream({ sendReasoning: isReasoningModel })
         );
 
-        if (titlePromise) {
+        if (titlePromise && isDatabaseConfigured) {
           try {
             const title = await titlePromise;
             dataStream.write({ type: "data-chat-title", data: title });
@@ -227,6 +228,10 @@ export async function POST(request: Request) {
       },
       generateId: generateUUID,
       onFinish: async ({ messages: finishedMessages }) => {
+        if (!isDatabaseConfigured) {
+          return;
+        }
+
         if (isToolApprovalFlow) {
           for (const finishedMsg of finishedMessages) {
             const existingMsg = uiMessages.find((m) => m.id === finishedMsg.id);
@@ -264,6 +269,7 @@ export async function POST(request: Request) {
         }
       },
       onError: (error) => {
+        console.error("Chat stream error:", error);
         if (
           error instanceof Error &&
           error.message?.includes(
@@ -279,7 +285,7 @@ export async function POST(request: Request) {
     return createUIMessageStreamResponse({
       stream,
       async consumeSseStream({ stream: sseStream }) {
-        if (!process.env.REDIS_URL) {
+        if (!process.env.REDIS_URL || !isDatabaseConfigured) {
           return;
         }
         try {
@@ -324,6 +330,10 @@ export async function DELETE(request: Request) {
 
   if (!id) {
     return new ChatbotError("bad_request:api").toResponse();
+  }
+
+  if (!isDatabaseConfigured) {
+    return Response.json({ id }, { status: 200 });
   }
 
   const chat = await getChatById({ id });

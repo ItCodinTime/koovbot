@@ -3,7 +3,7 @@ import { codeDocumentHandler } from "@/artifacts/code/server";
 import { sheetDocumentHandler } from "@/artifacts/sheet/server";
 import { textDocumentHandler } from "@/artifacts/text/server";
 import type { ArtifactKind } from "@/components/chat/artifact";
-import { saveDocument } from "../db/queries";
+import { isDatabaseConfigured, saveDocument } from "../db/queries";
 import type { Document } from "../db/schema";
 import type { ChatMessage } from "../types";
 
@@ -49,12 +49,14 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         modelId: args.modelId,
       });
 
-      await saveDocument({
-        id: args.id,
-        title: args.title,
-        content: draftContent,
-        kind: config.kind,
-      });
+      if (isDatabaseConfigured) {
+        await saveDocument({
+          id: args.id,
+          title: args.title,
+          content: draftContent,
+          kind: config.kind,
+        });
+      }
 
       return;
     },
@@ -66,12 +68,14 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         modelId: args.modelId,
       });
 
-      await saveDocument({
-        id: args.document.id,
-        title: args.document.title,
-        content: draftContent,
-        kind: config.kind,
-      });
+      if (isDatabaseConfigured) {
+        await saveDocument({
+          id: args.document.id,
+          title: args.document.title,
+          content: draftContent,
+          kind: config.kind,
+        });
+      }
 
       return;
     },

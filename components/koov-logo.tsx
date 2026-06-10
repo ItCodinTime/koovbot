@@ -1,20 +1,16 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function KoovMark({ className }: { className?: string }) {
   return (
-    <svg
+    <Image
+      alt=""
       aria-hidden="true"
-      className={cn("shrink-0", className)}
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="m4.25 5.25 12.5 12.5M4.25 11.25l6.5 6.5M10.25 5.25l7.5 7.5m-1.5-3.5 3.5-3.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="2.8"
-      />
-    </svg>
+      className={cn("shrink-0 object-contain", className)}
+      height={87}
+      src="/koov-logo.png"
+      width={108}
+    />
   );
 }
 

@@ -1,6 +1,10 @@
 import { Output, streamText, tool, type UIMessageStreamWriter } from "ai";
 import { z } from "zod";
-import { getDocumentById, saveSuggestions } from "@/lib/db/queries";
+import {
+  getDocumentById,
+  isDatabaseConfigured,
+  saveSuggestions,
+} from "@/lib/db/queries";
 import type { Suggestion } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
@@ -91,14 +95,16 @@ export const requestSuggestions = ({
         }
       }
 
-      await saveSuggestions({
-        suggestions: suggestions.map((suggestion) => ({
-          ...suggestion,
-          userId: null,
-          createdAt: new Date(),
-          documentCreatedAt: document.createdAt,
-        })),
-      });
+      if (isDatabaseConfigured) {
+        await saveSuggestions({
+          suggestions: suggestions.map((suggestion) => ({
+            ...suggestion,
+            userId: null,
+            createdAt: new Date(),
+            documentCreatedAt: document.createdAt,
+          })),
+        });
+      }
 
       return {
         id: documentId,

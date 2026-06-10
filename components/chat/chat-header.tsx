@@ -1,77 +1,65 @@
 "use client";
 
-import { ArrowUpRightIcon, PanelLeftIcon } from "lucide-react";
-import Link from "next/link";
-import { memo } from "react";
+import { ExpandIcon, Minimize2Icon, XIcon } from "lucide-react";
 import { KoovLogo } from "@/components/koov-logo";
 import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/components/ui/sidebar";
 import { VisibilitySelector, type VisibilityType } from "./visibility-selector";
 
-function PureChatHeader({
+export type ChatDisplayMode = "panel" | "fullscreen";
+
+export function ChatHeader({
   chatId,
   selectedVisibilityType,
   isReadonly,
+  displayMode,
+  onClose,
+  onDisplayModeChange,
 }: {
   chatId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  displayMode: ChatDisplayMode;
+  onClose: () => void;
+  onDisplayModeChange: (mode: ChatDisplayMode) => void;
 }) {
-  const { state, toggleSidebar, isMobile } = useSidebar();
-
-  if (state === "collapsed" && !isMobile) {
-    return null;
-  }
-
   return (
-    <header className="sticky top-0 flex h-14 items-center gap-2 bg-sidebar px-3">
-      <Button
-        className="md:hidden"
-        onClick={toggleSidebar}
-        size="icon-sm"
-        variant="ghost"
-      >
-        <PanelLeftIcon className="size-4" />
-      </Button>
-
-      <Link
-        className="flex items-center text-foreground md:hidden"
-        href="https://koovai.com"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <KoovLogo className="text-sm" markClassName="size-4" />
-      </Link>
+    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-primary/10 bg-card/90 px-3 backdrop-blur-xl">
+      <KoovLogo className="text-sm text-foreground" markClassName="size-4" />
+      <span className="hidden text-[11px] text-muted-foreground sm:inline">
+        AI teammate
+      </span>
 
       {!isReadonly && (
         <VisibilitySelector
           chatId={chatId}
+          className="ml-auto"
           selectedVisibilityType={selectedVisibilityType}
         />
       )}
 
       <Button
-        asChild
-        className="hidden rounded-lg border border-primary/20 bg-primary/8 px-3 text-primary shadow-none hover:bg-primary hover:text-primary-foreground md:ml-auto md:flex"
-        variant="outline"
+        aria-label={displayMode === "panel" ? "Maximize chat" : "Restore panel"}
+        className={isReadonly ? "ml-auto" : ""}
+        onClick={() =>
+          onDisplayModeChange(displayMode === "panel" ? "fullscreen" : "panel")
+        }
+        size="icon-sm"
+        variant="ghost"
       >
-        <Link
-          href="https://koovai.com"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Explore KOOV
-          <ArrowUpRightIcon className="size-3.5" />
-        </Link>
+        {displayMode === "panel" ? (
+          <ExpandIcon className="size-4" />
+        ) : (
+          <Minimize2Icon className="size-4" />
+        )}
+      </Button>
+      <Button
+        aria-label="Close chat"
+        onClick={onClose}
+        size="icon-sm"
+        variant="ghost"
+      >
+        <XIcon className="size-4" />
       </Button>
     </header>
   );
 }
-
-export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-  return (
-    prevProps.chatId === nextProps.chatId &&
-    prevProps.selectedVisibilityType === nextProps.selectedVisibilityType &&
-    prevProps.isReadonly === nextProps.isReadonly
-  );
-});

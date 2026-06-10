@@ -37,6 +37,8 @@ import { generateHashedPassword } from "./utils";
 const client = postgres(process.env.POSTGRES_URL ?? "");
 const db = drizzle(client);
 
+export const isDatabaseConfigured = Boolean(process.env.POSTGRES_URL);
+
 export async function getUser(email: string): Promise<User[]> {
   try {
     return await db.select().from(user).where(eq(user.email, email));

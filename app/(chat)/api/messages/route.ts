@@ -1,4 +1,8 @@
-import { getChatById, getMessagesByChatId } from "@/lib/db/queries";
+import {
+  getChatById,
+  getMessagesByChatId,
+  isDatabaseConfigured,
+} from "@/lib/db/queries";
 import { convertToUIMessages } from "@/lib/utils";
 
 export async function GET(request: Request) {
@@ -7,6 +11,15 @@ export async function GET(request: Request) {
 
   if (!chatId) {
     return Response.json({ error: "chatId required" }, { status: 400 });
+  }
+
+  if (!isDatabaseConfigured) {
+    return Response.json({
+      messages: [],
+      visibility: "private",
+      userId: null,
+      isReadonly: false,
+    });
   }
 
   const [chat, messages] = await Promise.all([
