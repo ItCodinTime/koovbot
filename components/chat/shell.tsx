@@ -119,6 +119,7 @@ export function ChatShell() {
               <Messages
                 addToolApprovalResponse={addToolApprovalResponse}
                 chatId={chatId}
+                compact={!isFullscreen}
                 isArtifactVisible={isArtifactVisible}
                 isLoading={isLoading}
                 isReadonly={isReadonly}
@@ -148,6 +149,7 @@ export function ChatShell() {
                   <MultimodalInput
                     attachments={attachments}
                     chatId={chatId}
+                    compact={!isFullscreen}
                     editingMessage={editingMessage}
                     input={input}
                     isLoading={isLoading}

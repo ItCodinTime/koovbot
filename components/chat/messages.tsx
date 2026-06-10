@@ -22,6 +22,7 @@ type MessagesProps = {
   isLoading?: boolean;
   selectedModelId: string;
   onEditMessage?: (message: ChatMessage) => void;
+  compact?: boolean;
 };
 
 function PureMessages({
@@ -37,6 +38,7 @@ function PureMessages({
   isLoading,
   selectedModelId: _selectedModelId,
   onEditMessage,
+  compact = false,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -62,8 +64,13 @@ function PureMessages({
   return (
     <div className="koov-canvas relative flex-1 bg-background">
       {messages.length === 0 && !isLoading && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-          <Greeting />
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-0 z-10 flex justify-center",
+            compact ? "items-start pt-8" : "items-center"
+          )}
+        >
+          <Greeting compact={compact} />
         </div>
       )}
       <div

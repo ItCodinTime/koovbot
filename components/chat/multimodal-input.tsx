@@ -86,6 +86,7 @@ function PureMultimodalInput({
   editingMessage,
   onCancelEdit,
   isLoading,
+  compact = false,
 }: {
   chatId: string;
   input: string;
@@ -106,6 +107,7 @@ function PureMultimodalInput({
   editingMessage?: ChatMessage | null;
   onCancelEdit?: () => void;
   isLoading?: boolean;
+  compact?: boolean;
 }) {
   const router = useRouter();
   const { setTheme, resolvedTheme } = useTheme();
@@ -393,6 +395,7 @@ function PureMultimodalInput({
         uploadQueue.length === 0 && (
           <SuggestedActions
             chatId={chatId}
+            compact={compact}
             selectedVisibilityType={selectedVisibilityType}
             sendMessage={sendMessage}
           />
@@ -473,7 +476,10 @@ function PureMultimodalInput({
           </div>
         )}
         <PromptInputTextarea
-          className="min-h-24 text-[13px] leading-relaxed px-4 pt-3.5 pb-1.5 placeholder:text-muted-foreground/35"
+          className={cn(
+            "text-[13px] leading-relaxed px-4 pt-3.5 pb-1.5 placeholder:text-muted-foreground/35",
+            compact ? "min-h-16" : "min-h-24"
+          )}
           data-testid="multimodal-input"
           onChange={handleInput}
           onKeyDown={(e) => {
@@ -576,6 +582,9 @@ export const MultimodalInput = memo(
     if (prevProps.isLoading !== nextProps.isLoading) {
       return false;
     }
+    if (prevProps.compact !== nextProps.compact) {
+      return false;
+    }
     if (prevProps.messages.length !== nextProps.messages.length) {
       return false;
     }
@@ -643,13 +652,18 @@ function PureModelSelectorCompact({
   const capabilities: Record<string, ModelCapabilities> | undefined =
     modelsData?.capabilities ?? modelsData;
   const dynamicModels: ChatModel[] | undefined = modelsData?.models;
-  const activeModels = dynamicModels ?? chatModels;
+  const activeModels = dynamicModels?.filter(
+    (model) => model?.id && model?.name
+  ).length
+    ? dynamicModels.filter((model) => model?.id && model?.name)
+    : chatModels;
 
   const selectedModel =
     activeModels.find((m: ChatModel) => m.id === selectedModelId) ??
     activeModels.find((m: ChatModel) => m.id === DEFAULT_CHAT_MODEL) ??
-    activeModels[0];
-  const [provider] = selectedModel.id.split("/");
+    activeModels[0] ??
+    chatModels[0];
+  const [provider] = selectedModel?.id?.split("/") ?? [];
 
   return (
     <ModelSelector onOpenChange={setOpen} open={open}>
@@ -660,7 +674,9 @@ function PureModelSelectorCompact({
           variant="ghost"
         >
           {provider && <ModelSelectorLogo provider={provider} />}
-          <ModelSelectorName>{selectedModel.name}</ModelSelectorName>
+          <ModelSelectorName>
+            {selectedModel?.name ?? "Select model"}
+          </ModelSelectorName>
         </Button>
       </ModelSelectorTrigger>
       <ModelSelectorContent>

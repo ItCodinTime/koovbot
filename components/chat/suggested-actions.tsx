@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 import { suggestions } from "@/lib/constants";
 import type { ChatMessage } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { Suggestion } from "../ai-elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
 
@@ -12,14 +13,22 @@ type SuggestedActionsProps = {
   chatId: string;
   sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
   selectedVisibilityType: VisibilityType;
+  compact?: boolean;
 };
 
-function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
+function PureSuggestedActions({
+  chatId,
+  sendMessage,
+  compact = false,
+}: SuggestedActionsProps) {
   const suggestedActions = suggestions;
 
   return (
     <div
-      className="flex w-full gap-2.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible"
+      className={cn(
+        "flex w-full gap-2.5 overflow-x-auto pb-1",
+        !compact && "sm:grid sm:grid-cols-2 sm:overflow-visible"
+      )}
       data-testid="suggested-actions"
       style={{
         scrollbarWidth: "none",
@@ -30,7 +39,10 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
-          className="min-w-[200px] shrink-0 sm:min-w-0 sm:shrink"
+          className={cn(
+            "shrink-0",
+            compact ? "min-w-[170px]" : "min-w-[200px] sm:min-w-0 sm:shrink"
+          )}
           exit={{ opacity: 0, y: 16 }}
           initial={{ opacity: 0, y: 16 }}
           key={suggestedAction}
@@ -41,7 +53,12 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
           }}
         >
           <Suggestion
-            className="h-auto w-full whitespace-nowrap rounded-xl border border-primary/10 bg-card/65 px-4 py-3 text-left text-[12px] leading-relaxed text-muted-foreground shadow-[var(--shadow-card)] transition-all duration-200 sm:whitespace-normal sm:p-4 sm:text-[13px] hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:text-foreground hover:shadow-[var(--shadow-glow)]"
+            className={cn(
+              "h-auto w-full whitespace-nowrap rounded-xl border border-primary/10 bg-card/65 text-left text-[12px] leading-relaxed text-muted-foreground shadow-[var(--shadow-card)] transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:text-foreground hover:shadow-[var(--shadow-glow)]",
+              compact
+                ? "px-3 py-2.5"
+                : "px-4 py-3 sm:whitespace-normal sm:p-4 sm:text-[13px]"
+            )}
             onClick={(suggestion) => {
               window.history.pushState(
                 {},
@@ -70,6 +87,9 @@ export const SuggestedActions = memo(
       return false;
     }
     if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType) {
+      return false;
+    }
+    if (prevProps.compact !== nextProps.compact) {
       return false;
     }
 

@@ -17,8 +17,8 @@ export const fetcher = async (url: string) => {
   const response = await fetch(url);
 
   if (!response.ok) {
-    const { code, cause } = await response.json();
-    throw new ChatbotError(code as ErrorCode, cause);
+    const error = await response.json().catch(() => ({}));
+    throw new ChatbotError(error.code as ErrorCode | undefined, error.cause);
   }
 
   return response.json();
@@ -32,8 +32,8 @@ export async function fetchWithErrorHandlers(
     const response = await fetch(input, init);
 
     if (!response.ok) {
-      const { code, cause } = await response.json();
-      throw new ChatbotError(code as ErrorCode, cause);
+      const error = await response.json().catch(() => ({}));
+      throw new ChatbotError(error.code as ErrorCode | undefined, error.cause);
     }
 
     return response;

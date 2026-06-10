@@ -40,7 +40,7 @@ export class ChatbotError extends Error {
   surface: Surface;
   statusCode: number;
 
-  constructor(errorCode: ErrorCode, cause?: string) {
+  constructor(errorCode: ErrorCode = "offline:chat", cause?: string) {
     super();
 
     const [type, surface] = errorCode.split(":");
