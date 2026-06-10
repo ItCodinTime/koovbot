@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircleIcon, XIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { KoovLogo, KoovMark } from "@/components/koov-logo";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
 
 export function ChatShell() {
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get("embed") === "1";
   const {
     chatId,
     messages,
@@ -43,7 +46,7 @@ export function ChatShell() {
   );
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [displayMode, setDisplayMode] = useState<ChatDisplayMode | "closed">(
-    "closed"
+    isEmbed ? "panel" : "closed"
   );
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
   const { setArtifact } = useArtifact();
@@ -70,10 +73,18 @@ export function ChatShell() {
 
   const isOpen = displayMode !== "closed";
   const isFullscreen = displayMode === "fullscreen";
+  const closeChat = () => {
+    if (isEmbed) {
+      window.parent.postMessage({ type: "koov-chat-close" }, "*");
+      return;
+    }
+
+    setDisplayMode("closed");
+  };
 
   return (
     <>
-      <WidgetBackdrop isDocked={displayMode === "panel"} />
+      {!isEmbed && <WidgetBackdrop isDocked={displayMode === "panel"} />}
 
       <div
         className={cn(
@@ -97,7 +108,7 @@ export function ChatShell() {
               chatId={chatId}
               displayMode={isFullscreen ? "fullscreen" : "panel"}
               isReadonly={isReadonly}
-              onClose={() => setDisplayMode("closed")}
+              onClose={closeChat}
               onDisplayModeChange={setDisplayMode}
               selectedVisibilityType={visibilityType}
             />
@@ -198,21 +209,23 @@ export function ChatShell() {
         </div>
       </div>
 
-      <Button
-        aria-label={isOpen ? "Close KOOV chat" : "Open KOOV chat"}
-        className={cn(
-          "fixed right-3 bottom-3 z-50 size-16 overflow-visible rounded-none border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-110 hover:bg-transparent active:scale-95 sm:right-5 sm:bottom-5 sm:size-20",
-          isOpen && "pointer-events-none scale-75 opacity-0"
-        )}
-        onClick={() => setDisplayMode(isOpen ? "closed" : "panel")}
-        size="icon"
-      >
-        {isOpen ? (
-          <XIcon className="size-5" />
-        ) : (
-          <KoovMark className="size-full drop-shadow-[0_12px_24px_rgba(255,117,31,0.35)]" />
-        )}
-      </Button>
+      {!isEmbed && (
+        <Button
+          aria-label={isOpen ? "Close KOOV chat" : "Open KOOV chat"}
+          className={cn(
+            "fixed right-3 bottom-3 z-50 size-16 overflow-visible rounded-none border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-110 hover:bg-transparent active:scale-95 sm:right-5 sm:bottom-5 sm:size-20",
+            isOpen && "pointer-events-none scale-75 opacity-0"
+          )}
+          onClick={() => setDisplayMode(isOpen ? "closed" : "panel")}
+          size="icon"
+        >
+          {isOpen ? (
+            <XIcon className="size-5" />
+          ) : (
+            <KoovMark className="size-full drop-shadow-[0_12px_24px_rgba(255,117,31,0.35)]" />
+          )}
+        </Button>
+      )}
 
       <DataStreamHandler />
     </>
