@@ -1,6 +1,17 @@
-import { customProvider, gateway } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
+import { customProvider } from "ai";
 import { isTestEnvironment } from "../constants";
-import { titleModel } from "./models";
+import { DEFAULT_CHAT_MODEL } from "./models";
+
+const openrouter = createOpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  headers: {
+    "HTTP-Referer": process.env.OPENROUTER_SITE_URL ?? "https://koovai.com",
+    "X-Title": "KOOV AI",
+  },
+  name: "openrouter",
+});
 
 export const myProvider = isTestEnvironment
   ? (() => {
@@ -19,12 +30,12 @@ export function getLanguageModel(modelId: string) {
     return myProvider.languageModel("chat-model");
   }
 
-  return gateway.languageModel(modelId);
+  return openrouter(modelId);
 }
 
 export function getTitleModel() {
   if (isTestEnvironment && myProvider) {
     return myProvider.languageModel("title-model");
   }
-  return gateway.languageModel(titleModel.id);
+  return openrouter(DEFAULT_CHAT_MODEL);
 }
