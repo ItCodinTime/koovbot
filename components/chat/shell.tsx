@@ -142,7 +142,9 @@ export function ChatShell() {
               <div
                 className={cn(
                   "sticky bottom-0 z-1 mx-auto flex w-full gap-2 border-t-0 bg-gradient-to-t from-background via-background/95 to-transparent px-2 pt-4 pb-3",
-                  isFullscreen ? "max-w-4xl md:px-4 md:pb-4" : "max-w-none"
+                  isFullscreen
+                    ? "max-w-4xl md:px-4 md:pb-4"
+                    : "max-w-none px-3 pb-3"
                 )}
               >
                 {!isReadonly && (
@@ -213,7 +215,7 @@ export function ChatShell() {
       <Button
         aria-label={isOpen ? "Close KOOV chat" : "Open KOOV chat"}
         className={cn(
-          "fixed right-3 bottom-3 z-50 size-14 overflow-hidden rounded-2xl border border-primary/20 bg-[#f2f2f2] p-0 text-primary-foreground shadow-[0_16px_40px_-12px_rgba(255,117,31,0.55)] transition-all duration-300 hover:scale-105 hover:bg-[#f2f2f2] active:scale-95 sm:right-5 sm:bottom-5 sm:size-16",
+          "fixed right-3 bottom-3 z-50 size-16 overflow-visible rounded-none border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-110 hover:bg-transparent active:scale-95 sm:right-5 sm:bottom-5 sm:size-20",
           isOpen && "pointer-events-none scale-75 opacity-0"
         )}
         onClick={() => setDisplayMode(isOpen ? "closed" : "panel")}
@@ -222,7 +224,7 @@ export function ChatShell() {
         {isOpen ? (
           <XIcon className="size-5" />
         ) : (
-          <KoovMark className="size-12" />
+          <KoovMark className="size-full drop-shadow-[0_12px_24px_rgba(255,117,31,0.35)]" />
         )}
       </Button>
 

@@ -29,7 +29,7 @@ export function ChatHeader({
         AI teammate
       </span>
 
-      {!isReadonly && (
+      {!isReadonly && displayMode === "fullscreen" && (
         <VisibilitySelector
           chatId={chatId}
           className="ml-auto"
@@ -39,7 +39,7 @@ export function ChatHeader({
 
       <Button
         aria-label={displayMode === "panel" ? "Maximize chat" : "Restore panel"}
-        className={isReadonly ? "ml-auto" : ""}
+        className={isReadonly || displayMode === "panel" ? "ml-auto" : ""}
         onClick={() =>
           onDisplayModeChange(displayMode === "panel" ? "fullscreen" : "panel")
         }

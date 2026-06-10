@@ -371,7 +371,13 @@ function PureMultimodalInput({
   }, [handlePaste]);
 
   return (
-    <div className={cn("relative flex w-full flex-col gap-4", className)}>
+    <div
+      className={cn(
+        "relative flex w-full flex-col",
+        compact ? "gap-3" : "gap-4",
+        className
+      )}
+    >
       {editingMessage && onCancelEdit && (
         <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
           <span>Editing message</span>
@@ -422,7 +428,10 @@ function PureMultimodalInput({
       </div>
 
       <PromptInput
-        className="[&>div]:rounded-2xl [&>div]:border [&>div]:border-primary/15 [&>div]:bg-card/90 [&>div]:shadow-[var(--shadow-composer)] [&>div]:backdrop-blur-xl [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:border-primary/35 [&>div]:focus-within:shadow-[var(--shadow-glow)]"
+        className={cn(
+          "[&>div]:rounded-2xl [&>div]:border [&>div]:border-primary/15 [&>div]:bg-card/90 [&>div]:shadow-[var(--shadow-composer)] [&>div]:backdrop-blur-xl [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:border-primary/35 [&>div]:focus-within:shadow-[var(--shadow-glow)]",
+          compact && "[&>div]:rounded-xl"
+        )}
         onSubmit={() => {
           if (input.startsWith("/")) {
             const query = input.slice(1).trim();
@@ -478,7 +487,7 @@ function PureMultimodalInput({
         <PromptInputTextarea
           className={cn(
             "text-[13px] leading-relaxed px-4 pt-3.5 pb-1.5 placeholder:text-muted-foreground/35",
-            compact ? "min-h-16" : "min-h-24"
+            compact ? "min-h-12 pt-3" : "min-h-24"
           )}
           data-testid="multimodal-input"
           onChange={handleInput}

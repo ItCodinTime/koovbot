@@ -3,18 +3,25 @@ import { KoovMark } from "@/components/koov-logo";
 
 export const Greeting = ({ compact = false }: { compact?: boolean }) => {
   return (
-    <div className="flex max-w-2xl flex-col items-center px-4" key="overview">
+    <div
+      className={
+        compact
+          ? "flex max-w-sm flex-col items-center px-6"
+          : "flex max-w-2xl flex-col items-center px-4"
+      }
+      key="overview"
+    >
       <motion.div
         animate={{ opacity: 1, scale: 1 }}
         className={
           compact
-            ? "hidden"
+            ? "mb-4 flex size-14 items-center justify-center rounded-2xl border border-primary/15 bg-primary/5 shadow-[var(--shadow-glow)]"
             : "mb-6 flex size-14 items-center justify-center rounded-2xl border border-primary/20 bg-card text-primary shadow-[var(--shadow-glow)]"
         }
         initial={{ opacity: 0, scale: 0.9 }}
         transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <KoovMark className="size-7" />
+        <KoovMark className={compact ? "size-10" : "size-7"} />
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -44,14 +51,15 @@ export const Greeting = ({ compact = false }: { compact?: boolean }) => {
         animate={{ opacity: 1, y: 0 }}
         className={
           compact
-            ? "hidden"
+            ? "mt-2 max-w-xs text-center text-muted-foreground text-xs leading-relaxed"
             : "mt-4 max-w-lg text-center text-muted-foreground text-sm md:text-base"
         }
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        Turn scattered work into clear next steps. Ask about your projects,
-        decisions, research, or anything your team needs to move forward.
+        {compact
+          ? "Ask a question or choose a quick start below."
+          : "Turn scattered work into clear next steps. Ask about your projects, decisions, research, or anything your team needs to move forward."}
       </motion.div>
     </div>
   );

@@ -67,7 +67,7 @@ function PureMessages({
         <div
           className={cn(
             "pointer-events-none absolute inset-0 z-10 flex justify-center",
-            compact ? "items-start pt-8" : "items-center"
+            compact ? "items-start pt-7" : "items-center"
           )}
         >
           <Greeting compact={compact} />

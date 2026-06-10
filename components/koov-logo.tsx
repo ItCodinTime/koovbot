@@ -8,7 +8,7 @@ export function KoovMark({ className }: { className?: string }) {
       aria-hidden="true"
       className={cn("shrink-0 object-contain", className)}
       height={87}
-      src="/koov-logo.png"
+      src="/koov-logo-transparent.png"
       width={108}
     />
   );
