@@ -419,7 +419,7 @@ function PureMultimodalInput({
       </div>
 
       <PromptInput
-        className="[&>div]:rounded-2xl [&>div]:border [&>div]:border-border/30 [&>div]:bg-card/70 [&>div]:shadow-[var(--shadow-composer)] [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:shadow-[var(--shadow-composer-focus)]"
+        className="[&>div]:rounded-2xl [&>div]:border [&>div]:border-primary/15 [&>div]:bg-card/90 [&>div]:shadow-[var(--shadow-composer)] [&>div]:backdrop-blur-xl [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:border-primary/35 [&>div]:focus-within:shadow-[var(--shadow-glow)]"
         onSubmit={() => {
           if (input.startsWith("/")) {
             const query = input.slice(1).trim();
@@ -510,7 +510,7 @@ function PureMultimodalInput({
             }
           }}
           placeholder={
-            editingMessage ? "Edit your message..." : "Ask anything..."
+            editingMessage ? "Edit your message..." : "Ask KOOV anything..."
           }
           ref={textareaRef}
           value={input}
@@ -535,7 +535,7 @@ function PureMultimodalInput({
               className={cn(
                 "h-7 w-7 rounded-xl transition-all duration-200",
                 input.trim()
-                  ? "bg-foreground text-background hover:opacity-85 active:scale-95"
+                  ? "bg-primary text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90 active:scale-95"
                   : "bg-muted text-muted-foreground/25 cursor-not-allowed"
               )}
               data-testid="send-button"

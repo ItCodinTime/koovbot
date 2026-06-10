@@ -1,11 +1,11 @@
 "use client";
 
-import { PanelLeftIcon } from "lucide-react";
+import { ArrowUpRightIcon, PanelLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { memo } from "react";
+import { KoovLogo } from "@/components/koov-logo";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
-import { VercelIcon } from "./icons";
 import { VisibilitySelector, type VisibilityType } from "./visibility-selector";
 
 function PureChatHeader({
@@ -35,12 +35,12 @@ function PureChatHeader({
       </Button>
 
       <Link
-        className="flex size-8 items-center justify-center rounded-lg md:hidden"
-        href="https://vercel.com/templates/next.js/chatbot"
+        className="flex items-center text-foreground md:hidden"
+        href="https://koovai.com"
         rel="noopener noreferrer"
         target="_blank"
       >
-        <VercelIcon size={14} />
+        <KoovLogo className="text-sm" markClassName="size-4" />
       </Link>
 
       {!isReadonly && (
@@ -52,15 +52,16 @@ function PureChatHeader({
 
       <Button
         asChild
-        className="hidden rounded-lg bg-foreground px-4 text-background hover:bg-foreground/90 md:ml-auto md:flex"
+        className="hidden rounded-lg border border-primary/20 bg-primary/8 px-3 text-primary shadow-none hover:bg-primary hover:text-primary-foreground md:ml-auto md:flex"
+        variant="outline"
       >
         <Link
-          href="https://vercel.com/templates/next.js/chatbot"
+          href="https://koovai.com"
           rel="noopener noreferrer"
           target="_blank"
         >
-          <VercelIcon size={16} />
-          Deploy with Vercel
+          Explore KOOV
+          <ArrowUpRightIcon className="size-3.5" />
         </Link>
       </Button>
     </header>

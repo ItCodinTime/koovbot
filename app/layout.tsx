@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter, Manrope } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -7,19 +7,25 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  metadataBase: new URL("https://koovai.com"),
+  title: "KOOV AI",
+  description: "Meet KOOV, your AI teammate.",
 };
 
 export const viewport = {
   maximumScale: 1,
 };
 
-const geist = Geist({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-geist",
+  variable: "--font-manrope",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
 const geistMono = Geist_Mono({
@@ -28,8 +34,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-const LIGHT_THEME_COLOR = "hsl(0 0% 100%)";
-const DARK_THEME_COLOR = "hsl(240deg 10% 3.92%)";
+const LIGHT_THEME_COLOR = "#fffaf7";
+const DARK_THEME_COLOR = "#0b0b0b";
 const THEME_COLOR_SCRIPT = `\
 (function() {
   var html = document.documentElement;
@@ -55,7 +61,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${manrope.variable} ${inter.variable} ${geistMono.variable}`}
       lang="en"
       suppressHydrationWarning
     >

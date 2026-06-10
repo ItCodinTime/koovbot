@@ -60,7 +60,7 @@ function PureMessages({
   }, [chatId, reset]);
 
   return (
-    <div className="relative flex-1 bg-background">
+    <div className="koov-canvas relative flex-1 bg-background">
       {messages.length === 0 && !isLoading && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
           <Greeting />

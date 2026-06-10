@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  MessageSquareIcon,
-  PanelLeftIcon,
-  PenSquareIcon,
-  TrashIcon,
-} from "lucide-react";
+import { PanelLeftIcon, PenSquareIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { User } from "next-auth";
@@ -18,6 +13,7 @@ import {
   SidebarHistory,
 } from "@/components/chat/sidebar-history";
 import { SidebarUserNav } from "@/components/chat/sidebar-user-nav";
+import { KoovLogo } from "@/components/koov-logo";
 import {
   Sidebar,
   SidebarContent,
@@ -73,11 +69,14 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               <div className="group/logo relative flex items-center justify-center">
                 <SidebarMenuButton
                   asChild
-                  className="size-8 !px-0 items-center justify-center group-data-[collapsible=icon]:group-hover/logo:opacity-0"
-                  tooltip="Chatbot"
+                  className="h-8 !px-0 items-center justify-start group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:group-hover/logo:opacity-0"
+                  tooltip="KOOV"
                 >
                   <Link href="/" onClick={() => setOpenMobile(false)}>
-                    <MessageSquareIcon className="size-4 text-sidebar-foreground/50" />
+                    <KoovLogo
+                      className="text-sm text-sidebar-foreground group-data-[collapsible=icon]:[&_span]:hidden"
+                      markClassName="size-4"
+                    />
                   </Link>
                 </SidebarMenuButton>
                 <Tooltip>
@@ -106,7 +105,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    className="h-8 rounded-lg border border-sidebar-border text-[13px] text-sidebar-foreground/70 transition-colors duration-150 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                    className="h-8 rounded-lg border border-primary/15 bg-primary/5 text-[13px] text-sidebar-foreground/70 transition-colors duration-150 hover:bg-primary/10 hover:text-sidebar-foreground"
                     onClick={() => {
                       setOpenMobile(false);
                       router.push("/");

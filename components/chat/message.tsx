@@ -1,5 +1,6 @@
 "use client";
 import type { UseChatHelpers } from "@ai-sdk/react";
+import { KoovMark } from "@/components/koov-logo";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { cn, sanitizeText } from "@/lib/utils";
@@ -15,7 +16,6 @@ import {
 import { useDataStream } from "./data-stream-provider";
 import { DocumentToolResult } from "./document";
 import { DocumentPreview } from "./document-preview";
-import { SparklesIcon } from "./icons";
 import { MessageActions } from "./message-actions";
 import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
@@ -345,8 +345,8 @@ const PurePreviewMessage = ({
       >
         {isAssistant && (
           <div className="flex h-[calc(13px*1.65)] shrink-0 items-center">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground ring-1 ring-border/50">
-              <SparklesIcon size={13} />
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/8 text-primary ring-1 ring-primary/20">
+              <KoovMark className="size-3.5" />
             </div>
           </div>
         )}
@@ -371,14 +371,14 @@ export const ThinkingMessage = () => {
     >
       <div className="flex items-start gap-3">
         <div className="flex h-[calc(13px*1.65)] shrink-0 items-center">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground ring-1 ring-border/50">
-            <SparklesIcon size={13} />
+          <div className="flex size-7 items-center justify-center rounded-lg bg-primary/8 text-primary ring-1 ring-primary/20">
+            <KoovMark className="size-3.5" />
           </div>
         </div>
 
         <div className="flex h-[calc(13px*1.65)] items-center text-[13px] leading-[1.65]">
           <Shimmer className="font-medium" duration={1}>
-            Thinking...
+            KOOV is thinking...
           </Shimmer>
         </div>
       </div>

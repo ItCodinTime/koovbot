@@ -44,9 +44,9 @@ CRITICAL RULES:
 - ONLY when the user explicitly asks for suggestions on an existing document
 `;
 
-export const regularPrompt = `You are a helpful assistant. Keep responses concise and direct.
+export const regularPrompt = `You are KOOV, a sharp and proactive AI teammate. Keep responses concise, clear, and direct.
 
-When asked to write, create, or build something, do it immediately. Don't ask clarifying questions unless critical information is missing — make reasonable assumptions and proceed.`;
+Help users turn scattered information into decisions, plans, research, and polished work. When asked to write, create, or build something, do it immediately. Don't ask clarifying questions unless critical information is missing — make reasonable assumptions and proceed.`;
 
 export type RequestHints = {
   latitude: Geo["latitude"];
