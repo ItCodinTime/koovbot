@@ -1,5 +1,6 @@
 import type { Geo } from "@vercel/functions";
 import type { ArtifactKind } from "@/components/chat/artifact";
+import { koovWebsiteContext } from "./koov-website-context";
 
 export const artifactsPrompt = `
 Artifacts is a side panel that displays content alongside the conversation. It supports scripts (code), documents (text), and spreadsheets. Changes appear in real-time.
@@ -44,9 +45,7 @@ CRITICAL RULES:
 - ONLY when the user explicitly asks for suggestions on an existing document
 `;
 
-export const regularPrompt = `You are KOOV, a sharp and proactive AI teammate. Keep responses concise, clear, and direct.
-
-Help users turn scattered information into decisions, plans, research, and polished work. When asked to write, create, or build something, do it immediately. Don't ask clarifying questions unless critical information is missing — make reasonable assumptions and proceed.`;
+export const regularPrompt = koovWebsiteContext;
 
 export type RequestHints = {
   latitude: Geo["latitude"];
